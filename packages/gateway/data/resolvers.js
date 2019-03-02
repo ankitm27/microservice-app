@@ -1,37 +1,37 @@
 const axios = require('axios');
+const { serviceDatabase : { port } } = require('./../config/index.js');
 
-const mockMails = [{
-    subject:"my first email",
-    receiver:"check@check.com",
-    content:"check"
-},{
-    subject:"my first email1",
-    receiver:"check1@check.com",
-    content:"check1"
-},{
-    subject:"my first email2",
-    receiver:"check2@check.com",
-    content:"check2"
-}];
+const hostName = "http://localhost";
+const databaseURL = `${hostName}:${port}`;
+
 
 const getMails = async () => {
     // const result = (await axios.get('http://localhost:4000/mails'));
     // console.log("result",result);
-    const mails = (await axios.get('http://localhost:4000/mails')).data.payload;
+    const mails = (await axios.get(`${databaseURL}/mails`)).data.payload;
     // console.log("mails",mails);
     return mails;
+}
+
+const getSingleMail = async(id) => {
+    console.log("id",id);
+    const mail = (await axios.get(`${databaseURL}/mails/${id}`)).data.payload;
+    console.log("mail",mail);
+    return mail;
+}
+
+const postSingleMail = async(body) => {
+    const postedMail = (await axios.post(`${databaseURL}/mails`,{ ...body })).data.payload;
+    return postedMail;
 }
 
 module.exports = {
     Query : {
         mails:() => getMails(),
-        mail:(_,args) => mockMails[0]
+        mail:(_,{id}) => getSingleMail(id)
     },
     Mutation : {
-        mail:(_, args) => {
-            mockMails[0] = args;
-            return args;
-        }
+        mail:(_, args) => postSingleMail(args)
     }
 }
 
