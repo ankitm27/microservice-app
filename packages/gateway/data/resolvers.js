@@ -1,3 +1,5 @@
+const axios = require('axios');
+
 const mockMails = [{
     subject:"my first email",
     receiver:"check@check.com",
@@ -12,11 +14,17 @@ const mockMails = [{
     content:"check2"
 }];
 
-
+const getMails = async () => {
+    // const result = (await axios.get('http://localhost:4000/mails'));
+    // console.log("result",result);
+    const mails = (await axios.get('http://localhost:4000/mails')).data.payload;
+    // console.log("mails",mails);
+    return mails;
+}
 
 module.exports = {
     Query : {
-        mails:() => mockMails,
+        mails:() => getMails(),
         mail:(_,args) => mockMails[0]
     },
     Mutation : {
