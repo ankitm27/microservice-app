@@ -1,9 +1,10 @@
 const amqp = require('amqplib/callback_api');
+const {q:{uri}} = require('./../config/index.js');
 
 const q = "test_q";
-let channel;
+let channel = null;
 
-amqp.connect('amqp://epkulpjz:zd_RqGPiVpnuQgZLwV4tlj2AgvEIrPSH@termite.rmq.cloudamqp.com/epkulpjz',(err,conn) => {
+amqp.connect(uri,(err,conn) => {
     if(err){
         throw new Error(err);
     }
@@ -13,12 +14,19 @@ amqp.connect('amqp://epkulpjz:zd_RqGPiVpnuQgZLwV4tlj2AgvEIrPSH@termite.rmq.cloud
         }
         ch.assertQueue(q,{ durable:true });
     
-        ch.sendToQueue(q, Buffer.from("check1234"));
+        // ch.sendToQueue(q, Buffer.from("check1234"));
+        channel = ch;
     });
-  
-    setTimeout(() => {
-        conn.close();
-        process.exit(0);
-    },1000);
-
 });
+
+const pushToMessageQ = (msg) => {
+    if(!channel){
+        setTimeout(pushToMessageQ(msg),1000);
+    }
+    channel.sendToQueue(q,Buffer.from(msg));
+    return {m:"done"};
+}
+
+module.exports = {
+    pushToMessageQ:pushToMessageQ
+}
