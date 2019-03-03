@@ -21,6 +21,13 @@ module.exports = {
       PORT: 4000
     },
     watch:true
+  },{
+    name:"mailing service",
+    script:basePath + '/mailing_service/index.js',
+    env:{
+      Q_URI:"amqp://epkulpjz:zd_RqGPiVpnuQgZLwV4tlj2AgvEIrPSH@termite.rmq.cloudamqp.com/epkulpjz"
+    },
+    watch:true
   }]
 
   
